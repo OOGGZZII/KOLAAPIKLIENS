@@ -50,7 +50,22 @@ class Client implements ClientInterface
 
     function post($url, array $data = [])
     {
+        $json = json_encode($data);
+        //usern passw stb
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        //passw
+        curl_setopt($curl, CURLOPT_URL, $this->url . $url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Content-Length: ' . strlen($json)]);
+        curl_setopt($curl, CURLOPT_POST, TRUE);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+        $response = curl_exec($curl);
+        if(!$response){
+            trigger_error(curl_error($curl));
+        }
+        curl_close($curl);
 
+        return json_decode($response, TRUE);
     }
 
     function update($url, array $data = [])
